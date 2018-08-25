@@ -1,0 +1,14 @@
+[Unit]
+Description=pulseaudio
+After=jackd.service
+Requires=jackd.service
+
+[Service]
+ExecStart=/usr/bin/pulseaudio --system --disallow-exit --disallow-module-loading
+CPUSchedulingPolicy=rr
+CPUSchedulingPriority=70
+LimitRTPRIO=71
+LimitRTTIME=infinity
+
+[Install]
+WantedBy=multi-user.target

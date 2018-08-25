@@ -1,0 +1,16 @@
+[Unit]
+Description=Jack
+
+[Service]
+#ExecStart=/usr/bin/jackd -d alsa -c hw:dmx6fire -C 0 -P 0 -r 192000 -p 512
+LimitRTPRIO=infinity
+LimitMEMLOCK=infinity
+SupplementaryGroup=audio
+ExecStart=/usr/bin/jackd -d dummy -C 0 -P 0 -r 48000 -p 1024
+#ExecStart=/usr/bin/jackd -d alsa -d hw:dmx6fire -r 96000 -p 512
+Restart=always
+RestartSec=10
+Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket
+
+[Install]
+WantedBy=default.target
