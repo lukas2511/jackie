@@ -1,0 +1,4 @@
+#!/bin/bash
+
+export PULSE_SINK=spotify-out
+exec /usr/bin/spotify "$*"
