@@ -35,6 +35,17 @@ load-module module-switch-on-port-available
 ### Load audio drivers statically
 ### (it's probably better to not load these drivers manually, but instead
 ### use module-udev-detect -- see below -- for doing this automatically)
+
+### Load several protocols
+load-module module-dbus-protocol
+.ifexists module-esound-protocol-unix.so
+load-module module-esound-protocol-unix
+.endif
+load-module module-native-protocol-unix
+
+load-module module-always-sink
+
+# load devices
 load-module module-jack-sink sink_name=scarlett2i4-out1 sink_properties=device.description=Focusrite-Output-1+2 client_name=pa-scarlett2i4-in1 channels=2 channel_map=front-left,front-right connect=no
 load-module module-jack-sink sink_name=scarlett2i4-out2 sink_properties=device.description=Focusrite-Output-3+4 client_name=pa-scarlett2i4-in2 channels=2 channel_map=front-left,front-right connect=no
 load-module module-jack-source source_name=scarlett2i4-in1 source_properties=device.description=Focusrite-Input-1 client_name=pa-scarlett2i4-out1 channels=1 connect=no
@@ -48,14 +59,5 @@ load-module module-jack-sink sink_name=custom-out2 sink_properties=device.descri
 # spotify
 load-module module-jack-sink sink_name=spotify-out sink_properties=device.description=Spotify client_name=pa-spotify channels=2 channel_map=front-left,front-right connect=no
 
-### Load several protocols
-load-module module-dbus-protocol
-.ifexists module-esound-protocol-unix.so
-load-module module-esound-protocol-unix
-.endif
-load-module module-native-protocol-unix
-
-load-module module-always-sink
-
-set-default-sink scarlett2i4-out
+set-default-sink scarlett2i4-out1
 set-default-source scarlett2i4-in1
