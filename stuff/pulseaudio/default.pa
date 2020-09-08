@@ -1,0 +1,61 @@
+#!/usr/bin/pulseaudio -nF
+#
+# This file is part of PulseAudio.
+#
+# PulseAudio is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# PulseAudio is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with PulseAudio; if not, see <http://www.gnu.org/licenses/>.
+
+# This startup script is used only if PulseAudio is started per-user
+# (i.e. not in system mode)
+
+.fail
+
+### Automatically restore the volume of streams and devices
+load-module module-device-restore
+load-module module-stream-restore
+load-module module-card-restore
+
+### Automatically augment property information from .desktop files
+### stored in /usr/share/application
+load-module module-augment-properties
+
+### Should be after module-*-restore but before module-*-detect
+load-module module-switch-on-port-available
+
+### Load audio drivers statically
+### (it's probably better to not load these drivers manually, but instead
+### use module-udev-detect -- see below -- for doing this automatically)
+load-module module-jack-sink sink_name=scarlett2i4-out1 sink_properties=device.description=Focusrite-Output-1+2 client_name=pa-scarlett2i4-in1 channels=2 channel_map=front-left,front-right connect=no
+load-module module-jack-sink sink_name=scarlett2i4-out2 sink_properties=device.description=Focusrite-Output-3+4 client_name=pa-scarlett2i4-in2 channels=2 channel_map=front-left,front-right connect=no
+load-module module-jack-source source_name=scarlett2i4-in1 source_properties=device.description=Focusrite-Input-1 client_name=pa-scarlett2i4-out1 channels=1 connect=no
+load-module module-jack-source source_name=scarlett2i4-in2 source_properties=device.description=Focusrite-Input-2 client_name=pa-scarlett2i4-out2 channels=1 connect=no
+
+load-module module-jack-source source_name=custom-in1 source_properties=device.description=Custom-Input-1 client_name=pa-custom-out1 channels=2 connect=no
+load-module module-jack-source source_name=custom-in2 source_properties=device.description=Custom-Input-2 client_name=pa-custom-out2 channels=2 connect=no
+load-module module-jack-sink sink_name=custom-out1 sink_properties=device.description=Custom-Output-1 client_name=pa-custom-in1 channels=2 connect=no
+load-module module-jack-sink sink_name=custom-out2 sink_properties=device.description=Custom-Output-2 client_name=pa-custom-in2 channels=2 connect=no
+
+# spotify
+load-module module-jack-sink sink_name=spotify-out sink_properties=device.description=Spotify client_name=pa-spotify channels=2 channel_map=front-left,front-right connect=no
+
+### Load several protocols
+load-module module-dbus-protocol
+.ifexists module-esound-protocol-unix.so
+load-module module-esound-protocol-unix
+.endif
+load-module module-native-protocol-unix
+
+load-module module-always-sink
+
+set-default-sink scarlett2i4-out
+set-default-source scarlett2i4-in1
