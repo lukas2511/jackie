@@ -1,0 +1,82 @@
+<h2>Connections</h2>
+<table border="1">
+	{% for source in connections.keys()|sort(attribute='source') %}
+		{% if connections[source] %}
+		<tr>
+			<th>{{ source }}</th>
+			<td>
+				{% for sink in connections[source] %}
+					{{ sink }}
+					<form style="display:inline" action="/disconnect" method="post">
+						<input type="hidden" name="sink" value="{{ sink }}" />
+						<input type="hidden" name="source" value="{{ source }}" />
+						<input type="submit" value="X" />
+					</form>
+				{% endfor %}
+			</td>
+		</tr>
+		{% endif %}
+	{% endfor %}
+</table>
+
+<h2>Mixers</h2>
+<table border="1">
+	{% for mixer in mixers %}
+	<tr>
+		<td>{{ mixer.id }}</td>
+		<td>
+			<form style="display:inline" action="/setmixername" method="post">
+				<input type="hidden" name="mixer" value="{{ mixer.id }}" />
+				<input type="text" name="name" value="{{ mixer.name }}" />
+				<input type="submit" value="Set" />
+			</form>
+		<td>
+			<form style="display:inline" action="/setgain" method="post">
+				<input type="hidden" name="mixer" value="{{ mixer.id }}" />
+				<input type="text" name="gain" value="{{ mixer.gain }}" />
+				<input type="submit" value="Set" />
+			</form>
+		</td>
+		<td>
+			<form style="display:inline" action="/setmute" method="post">
+				<input type="hidden" name="mixer" value="{{ mixer.id }}" />
+				{% if mixer.mute %}
+				<input type="hidden" name="action" value="unmute" />
+				<input type="submit" value="Unmute" />
+				{% else %}
+				<input type="hidden" name="action" value="mute" />
+				<input type="submit" value="Mute" />
+				{% endif %}
+			</form>
+		</td>
+		<td>
+			<form style="display:inline" action="/delmixer" method="post">
+				<input type="hidden" name="mixer" value="{{ mixer.id }}" />
+				<input type="submit" value="Delete" />
+			</form>
+		</td>
+	</tr>
+	{% endfor %}
+</table>
+
+<h2>New Connection</h2>
+<form style="display:inline" action="/connect" method="post">
+	<select name="source">
+		{% for source in sources %}
+		<option value="{{ source }}">{{ source }}</option>
+		{% endfor %}
+	</select>
+	<select name="sink">
+		{% for sink in sinks %}
+		<option value="{{ sink }}">{{ sink }}</option>
+		{% endfor %}
+	</select>
+	<input type="submit" value="Connect" />
+</form>
+
+<h2>New Mixer</h2>
+<form style="display:inline" action="/addmixer" method="post">
+	<input type="text" name="name" placeholder="name" />
+	<input type="text" name="gain" value="1.0" placeholder="gain" />
+	<input type="submit" value="Add" />
+</form>

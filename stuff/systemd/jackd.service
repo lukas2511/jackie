@@ -1,0 +1,17 @@
+[Unit]
+Description=Jack
+
+[Service]
+LimitRTPRIO=infinity
+LimitMEMLOCK=infinity
+SupplementaryGroup=audio
+ExecStart=/usr/bin/jackd -d dummy -C 0 -P 0 -r 48000 -p 1024
+Restart=always
+RestartSec=10
+User=lukas2511
+Group=lukas2511
+Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket
+
+[Install]
+WantedBy=default.target
+
