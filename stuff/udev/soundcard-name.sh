@@ -16,13 +16,21 @@ elif [ "${DRIVER}" = "snd-usb-audio" ]; then
 		name="scarlett2i4"
 		kill -9 $(ps auxwww | grep -v grep | grep zita | grep "hw:${name}" | awk '{print $2}') || true
 		printf "%s" "${name}"
-	elif [ "${PRODUCT}" = "1397/bc/100" ]; then
+	elif [ "${PRODUCT}" = "a12/bc/1004" ]; then
 		name="bcf2000"
 		kill -9 $(ps auxwww | grep -v grep | grep zita | grep "hw:${name}" | awk '{print $2}') || true
 		printf "%s" "${name}"
+	elif [ "${PRODUCT}" = "a12/1004/2519" ]; then
+		name="bluetooth"
+		kill -9 $(ps auxwww | grep -v grep | grep zita | grep "hw:${name}" | awk '{print $2}') || true
+		printf "%s" "${name}"
 	else
+		echo "drv: ${DRIVER}" >> /tmp/unknown-soundcards.txt
+		echo "prd: ${PRODUCT}" >> /tmp/unknown-soundcards.txt
 		printf "unknowndev_%04x" ${RANDOM}
 	fi
 else
+	echo "drv: ${DRIVER}" >> /tmp/unknown-soundcards.txt
+	echo "prd: ${PRODUCT}" >> /tmp/unknown-soundcards.txt
 	printf "unknowndrv_%04x" ${RANDOM}
 fi

@@ -39,7 +39,8 @@ class Mixer(base.Object):
         self.thread.start()
 
     def calc_gain(self, gain):
-        return (math.exp(gain)-1) / (math.e - 1)
+        return (math.exp((math.exp(gain)-1) / (math.e - 1))-1) / (math.e - 1)
+#        return (math.exp(gain)-1) / (math.e - 1)
 
     def set_gain(self, gain):
         self.gain = self.calc_gain(gain)

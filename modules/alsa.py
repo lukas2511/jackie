@@ -5,13 +5,14 @@ import time
 from . import base
 
 class AlsaOutput(base.Object):
-    def __init__(self, name, device, nchannels=2, quality=None, rate=48000, period=256):
+    def __init__(self, name, device, nchannels=2, quality=None, rate=48000, period=256, extra_parms=None):
         self.name = name
         self.device = device
         self.nchannels = nchannels
         self.quality = quality
         self.rate = rate
         self.period = period
+        self.extra_parms = extra_parms
 
         self.in_ports = []
         for i in range(self.nchannels):
@@ -23,7 +24,7 @@ class AlsaOutput(base.Object):
         def target():
             while self.running:
                 try:
-                    self.process = subprocess.Popen(["zita-j2a", "-j", self.name, "-d", self.device, "-r", str(self.rate), "-p", str(self.period), "-c", str(self.nchannels)] + (["-Q", str(self.quality)] if self.quality else []), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    self.process = subprocess.Popen(["zita-j2a", "-j", self.name, "-d", self.device, "-r", str(self.rate), "-p", str(self.period), "-c", str(self.nchannels)] + (["-Q", str(self.quality)] if self.quality else []) + (self.extra_parms if self.extra_parms else []), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                     self.output, self.error = self.process.communicate()
                     self.status = self.process.returncode
                 except:

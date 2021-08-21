@@ -8,6 +8,7 @@ class ConnectionManager(object):
     def __init__(self):
         self.ensure = {}
 
+        self.ignores = []
         self.name = "ConnectionManager"
         self.client = jack.Client("connmanager")
         self.running = True
@@ -47,6 +48,8 @@ class ConnectionManager(object):
         for source, sinks in connections.items():
             for sink in sinks:
                 if source not in self.ensure or sink not in self.ensure[source]:
+                    if any([ign('source', source) or ign('sink', sink) for ign in self.ignores]):
+                        continue
                     print("Disconnecting '%s' and '%s'" % (source, sink))
                     self.client.disconnect(source, sink)
 
@@ -55,11 +58,11 @@ class ConnectionManager(object):
                 skip = False
 
                 if sink not in ports:
-                    print("Missing sink %s" % sink)
+                    #print("Missing sink %s" % sink)
                     skip=True
 
                 if source not in ports:
-                    print("Missing source %s" % source)
+                    #print("Missing source %s" % source)
                     skip=True
 
                 if not skip and sink not in connections[source]:

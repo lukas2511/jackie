@@ -2,6 +2,7 @@
 
 import modules
 import time
+import logging
 import json
 import sqlalchemy
 import sqlalchemy.ext.declarative
@@ -33,11 +34,18 @@ DBLock = threading.Lock()
 
 connmanager = modules.ConnectionManager()
 
+# ignore some apps connections
+connmanager.ignores.append(lambda t, dev: dev.startswith('PortAudio')) # ignore PortAudio (e.g. Audacity)
+connmanager.ignores.append(lambda t, dev: dev.startswith('alsoft')) # ignore alsoft (e.g. FlightGear)
+
 # outputs
 scarlett2i4_out = modules.AlsaOutput("Scarlett 2i4 Output", "hw:scarlett2i4", nchannels=4)
+bluetooth_out = modules.AlsaOutput("Bluetooth Output", "hw:bluetooth", nchannels=2)
+#headset_out = modules.AlsaOutput("VR Headset Output", "hw:unknowndev_3d3b", nchannels=2, rate=48000, period=2048)
 
 # inputs
 scarlett2i4_in = modules.AlsaInput("Scarlett 2i4 Input", "hw:scarlett2i4", nchannels=2)
+#headset_in = modules.AlsaInput("VR Headset Input", "hw:unknowndev_3d3b", nchannels=2, period=2048)
 
 # yolo
 mixers = {}
@@ -50,6 +58,10 @@ with DBLock:
         connmanager.connect(c.source, c.sink)
 
 app = Flask(__name__)
+
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
+
 @app.route('/')
 def web_index():
     context = {}
